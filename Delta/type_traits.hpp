@@ -1,4 +1,4 @@
-﻿/*
+/*
 MIT License
 Copyright (c) 2021 Delta17x
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,40 +17,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _DLTUTILITY_
-#define _DLTUTILITY_
-#define _DLT_BEGIN namespace dlt {
-#define _DLT_END }
+// Contains useful template-based structs for finding data (traits) about types.
+#ifndef _DLT_TYPE_TRAITS_
+#define _DLT_TYPE_TRAITS_
+#include "utility.hpp"
 _DLT_BEGIN
-#define _HAS_CPP11 __cplusplus > 201103L
-#define _HAS_CPP17 __cplusplus > 201703L
-
-#if _HAS_CPP17
-#define _INLINE inline
-#else
-#define _INLINE
-#endif
-
-#if _HAS_CPP11
-#define _NOEXCEPT noexcept
-#else
-#define _NOEXCEPT
-#endif 
-
-typedef   signed char int1_t;
-typedef unsigned char uint1_t;
-typedef   signed short int int2_t;
-typedef unsigned short int uint2_t;
-typedef   signed int int4_t;
-typedef unsigned int uint4_t;
-#if __WORDSIZE == 64
-typedef   signed long int int8_t;
-typedef unsigned long int uint8_t;
-#else
-typedef   signed long long int int8_t;
-typedef unsigned long long int uint8_t;
-#endif
-
+// Represents a constant of type "T" and value "val"
 template<class T, T val>
 struct variable_constant {
 	constexpr static T data = val;
@@ -93,42 +65,5 @@ template<class T>
 struct remove_reference<T&&> {
 	typedef T type;
 };
-
-template<class SrcT, class DestT>
-inline DestT* copy(SrcT* src_begin, const SrcT* src_end, SrcT* dest_begin) {
-	while (src_begin != src_end) {
-		*dest_begin++ = *src_begin++;
-	}
-	return dest_begin;
-}
-
-inline void* copy(const void* src, void* dest, uint8_t byte_count) {
-	auto mod = byte_count % sizeof(int4_t);
-	if (mod == 0) { // Copy sizeof(int4_t) bytes at a time
-		int4_t* dst = (int4_t*)dest;
-		const int4_t* sc = (const int4_t*)src;
-		for (uint8_t i = 0; i < byte_count / sizeof(int4_t); i++) {
-			dst[i] = sc[i];
-		}
-	}
-	else {
-		uint1_t* dst = (uint1_t*)dest;
-		const uint1_t* sc = (const uint1_t*)src;
-		for (uint8_t i = 0; i < byte_count; i++) {
-			dst[i] = sc[i];
-		}
-	}
-	return dest;
-}
-
-template<class SrcT, class DestT>
-inline DestT* move(SrcT* src_begin, const SrcT* src_end, SrcT* dest_begin) {
-	while (src_begin != src_end) {
-		*dest_begin++ = *src_begin++;
-		*src_begin = 0;
-	}
-	return dest_begin;
-}
-
 _DLT_END
-#endif
+#endif // !_DLT_TYPE_TRAITS_

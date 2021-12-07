@@ -1,7 +1,7 @@
 ﻿// Delta.cpp : Defines the entry point for the application.
 //
 
-#include "dltutility.h"
+#include "utility.hpp"
 
 int main()
 {
