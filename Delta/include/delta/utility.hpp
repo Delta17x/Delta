@@ -22,9 +22,13 @@ SOFTWARE.
 #define _DLT_UTILITY_
 #define _DLT_BEGIN namespace dlt {
 #define _DLT_END }
+#define _INT_BEGIN namespace internal {
+#define _INT_END }
 _DLT_BEGIN
 #define _HAS_CPP11 __cplusplus > 201103L
 #define _HAS_CPP17 __cplusplus > 201703L
+
+//static_assert(_HAS_CPP11, "Delta requires at least C++11.");
 
 #if _HAS_CPP17
 #define _INLINE inline
@@ -32,10 +36,10 @@ _DLT_BEGIN
 #define _INLINE
 #endif
 
-#if _HAS_CPP11
-#define _NOEXCEPT noexcept
+#if _HAS_CPP17
+#define _NODISCARD [[nodiscard]]
 #else
-#define _NOEXCEPT
-#endif 
+#define _NODISCARD
+#endif
 _DLT_END
 #endif

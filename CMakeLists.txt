@@ -7,3 +7,4 @@ project ("Delta")
 
 # Include sub-projects.
 add_subdirectory ("Delta")
+set (CMAKE_CXX_STANDARD 17)

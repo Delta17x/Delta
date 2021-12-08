@@ -49,7 +49,7 @@ template<class T>
 struct is_reference : false_t {};
 
 template<class T>
-struct is_reference<T&> : true_t {};
+struct is_reference<T&> : true_t {};	
 
 template<class T>
 struct remove_reference {
@@ -65,5 +65,22 @@ template<class T>
 struct remove_reference<T&&> {
 	typedef T type;
 };
+
+_INT_BEGIN
+template<class IfTrue, class, template<class...> class, class...>
+struct detector {
+	using value_t = false_t;
+	//using type = IfTrue;
+};
+
+template<class IfTrue, template<class...> class DoesExist, class... Args>
+struct detector<IfTrue, void, DoesExist, Args...> {
+	using value_t = true_t;
+	//using type = DoesExist<Args...>;
+};
+_INT_END
+
+template<class If, class Then, class Else>
+using detected_or = typename internal::detector<If, Then, Else>::value_t;
 _DLT_END
 #endif // !_DLT_TYPE_TRAITS_

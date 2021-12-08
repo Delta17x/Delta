@@ -59,5 +59,36 @@ inline DestT* move(SrcT* src_begin, const SrcT* src_end, SrcT* dest_begin) {
 	src_begin = nullptr;
 	return dest_begin;
 }
+
+template<class T>
+struct allocator {
+	using value_t = T;
+	allocator() {} 
+	// Allocates space for "amount" elements.
+	_NODISCARD T* allocate(size_t amount) const {
+		return new T[amount];
+	}
+	// Deallocates memory previously allocated with allocator::allocate().
+	void deallocate(T* allocated) const {
+		delete[] allocated;
+	}
+	template<class U>
+	using other = allocator<U>;
+};
+
+template<class Alloc>
+struct allocator_traits {
+	using allocator_t = Alloc;
+	using value_t = typename Alloc::value_t;
+	
+	//using pointer = /* see description */;
+	//using const_pointer = /* see description */;
+	//using void_pointer = /* see description */; 
+	//using const_void_pointer = /* see description */;
+	//
+	//using difference_type = /* see description */;
+	//using size_type = /* see description */;
+	
+};
 _DLT_END
 #endif // !_DLT_MEMORY_

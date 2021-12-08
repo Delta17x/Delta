@@ -56,5 +56,8 @@ typedef ::uintptr_t uintptr_t;
 typedef ::intmax_t intmax_t;
 typedef ::uintmax_t uintmax_t;
 
+
+typedef decltype(sizeof 1) size_t;
 _DLT_END
+
 #endif
