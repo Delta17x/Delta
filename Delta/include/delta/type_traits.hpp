@@ -22,16 +22,27 @@ SOFTWARE.
 #define _DLT_TYPE_TRAITS_
 #include "utility.hpp"
 _DLT_BEGIN
+
+#if _HAS_CPP17 || _DEBUG
+// Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
+#define __DLT_DATA_HELPER(oft) template<class T> inline constexpr auto oft##_v = typename oft##<T>::data
+#else
+// Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
+#define __DLT_DATA_HELPER(oft)
+#endif
+// Notice: not recommended for user use. Auto creates a _t version of a type_traits struct.
+#define __DLT_TYPE_HELPER(oft) template<class T> using oft##_t = typename oft##<T>::type
+
 // Represents a constant of type "T" and value "val"
 template<class T, T val>
 struct variable_constant {
 	constexpr static T data = val;
-	inline operator T() const _NOEXCEPT {
+	inline operator T() const noexcept {
 		return data;
 	}
 };
-typedef variable_constant<bool, true> true_t;
-typedef variable_constant<bool, true> false_t;
+typedef variable_constant<bool, true> true_t;	
+typedef variable_constant<bool, false> false_t;
 
 template<class T>
 struct is_pointer : false_t {};
@@ -39,17 +50,23 @@ struct is_pointer : false_t {};
 template<class T>
 struct is_pointer<T*> : true_t {};
 
+__DLT_DATA_HELPER(is_pointer);
+
 template<class T>
 struct is_const : false_t {};
 
 template<class T>
 struct is_const<const T> : true_t {};
 
+__DLT_DATA_HELPER(is_const);
+
 template<class T>
 struct is_reference : false_t {};
 
 template<class T>
 struct is_reference<T&> : true_t {};	
+
+__DLT_DATA_HELPER(is_reference);
 
 template<class T>
 struct remove_reference {
@@ -66,21 +83,16 @@ struct remove_reference<T&&> {
 	typedef T type;
 };
 
-_INT_BEGIN
-template<class IfTrue, class, template<class...> class, class...>
-struct detector {
-	using value_t = false_t;
-	//using type = IfTrue;
+__DLT_TYPE_HELPER(remove_reference);
+
+template<class T>
+struct make_ptr {
+	typedef typename remove_reference<T>::type* type;
 };
 
-template<class IfTrue, template<class...> class DoesExist, class... Args>
-struct detector<IfTrue, void, DoesExist, Args...> {
-	using value_t = true_t;
-	//using type = DoesExist<Args...>;
-};
-_INT_END
+__DLT_TYPE_HELPER(make_ptr);
 
-template<class If, class Then, class Else>
-using detected_or = typename internal::detector<If, Then, Else>::value_t;
+
+
 _DLT_END
 #endif // !_DLT_TYPE_TRAITS_

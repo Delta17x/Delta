@@ -5,11 +5,11 @@
 #include "include/delta/type_traits.hpp"
 #include <iostream>
 
+template<class T>
 struct foo {
 
 };
 
 int main() {
-	std::cout << sizeof(dlt::detected_or<int, int, int>);
 	return 0;
 }

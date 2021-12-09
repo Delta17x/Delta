@@ -25,8 +25,8 @@ SOFTWARE.
 #define _INT_BEGIN namespace internal {
 #define _INT_END }
 _DLT_BEGIN
-#define _HAS_CPP11 __cplusplus > 201103L
-#define _HAS_CPP17 __cplusplus > 201703L
+#define _HAS_CPP11 (__cplusplus > 201103L)
+#define _HAS_CPP17 (__cplusplus > 201703L)
 
 //static_assert(_HAS_CPP11, "Delta requires at least C++11.");
 
