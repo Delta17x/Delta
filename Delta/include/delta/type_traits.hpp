@@ -25,13 +25,13 @@ _DLT_BEGIN
 
 #if _HAS_CPP17 || _DEBUG
 // Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
-#define __DLT_DATA_HELPER(oft) template<class T> inline constexpr auto oft##_v = typename oft##<T>::value
+#define __DLT_DATA_HELPER(oft) template<class T> inline constexpr auto oft## _v = typename oft## <T>::value
 #else
 // Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
 #define __DLT_DATA_HELPER(oft)
 #endif
 // Notice: not recommended for user use. Auto creates a _t version of a type_traits struct.
-#define __DLT_TYPE_HELPER(oft) template<class T> using oft##_t = typename oft##<T>::type
+#define __DLT_TYPE_HELPER(oft) template<class T> using oft## _t = typename oft## <T>::type
 
 // Represents a constant of type "T" and value "val"
 template<class T, T val>
@@ -65,6 +65,9 @@ struct is_reference : false_t {};
 
 template<class T>
 struct is_reference<T&> : true_t {};	
+
+template<class T>
+struct is_reference<T&&> : true_t {};
 
 __DLT_DATA_HELPER(is_reference);
 
@@ -111,14 +114,6 @@ template<class T, size_t _S>
 struct is_array<T[_S]> : true_t {}; 
 
 __DLT_DATA_HELPER(is_array);
-
-template<class T>
-struct is_enum : false_t {};
-
-template<class T>
-struct is_enum<enum T> : true_t {};
-
-__DLT_DATA_HELPER(is_enum);
 
 template<class T>
 struct remove_reference {

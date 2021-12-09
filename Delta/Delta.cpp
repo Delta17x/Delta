@@ -8,6 +8,6 @@
 
 
 int main() {
-	//std::cout << dlt::is_enum_v<>;
+	std::cout << dlt::is_reference_v<int&&>;
 	return 0;
 }
