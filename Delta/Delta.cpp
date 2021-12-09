@@ -3,13 +3,11 @@
 
 #include "include/delta/memory.hpp"
 #include "include/delta/type_traits.hpp"
+#include "include/delta/exception.hpp"
 #include <iostream>
 
-template<class T>
-struct foo {
-
-};
 
 int main() {
+	//std::cout << dlt::is_enum_v<>;
 	return 0;
 }

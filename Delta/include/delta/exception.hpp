@@ -1,4 +1,4 @@
-﻿/*
+/*
 MIT License
 Copyright (c) 2021 Delta17x
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,29 +17,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// Base header file for Delta library. Contains useful macros, functions, and typedefs.
-#ifndef DLT_UTILITY_INCLUDED
-#define DLT_UTILITY_INCLUDED
-#define _DLT_BEGIN namespace dlt {
-#define _DLT_END }
-#define _INT_BEGIN namespace internal {
-#define _INT_END }
+#ifndef DLT_EXCEPTION_INCLUDED
+#define DLT_EXCEPTION_INCLUDED
+#include "utility.hpp"
 _DLT_BEGIN
-#define _HAS_CPP11 (__cplusplus > 201103L)
-#define _HAS_CPP17 (__cplusplus > 201703L)
-
-//static_assert(_HAS_CPP11, "Delta requires at least C++11.");
-
-#if _HAS_CPP17
-#define _INLINE inline
-#else
-#define _INLINE
-#endif
-
-#if _HAS_CPP17
-#define _NODISCARD [[nodiscard]]
-#else
-#define _NODISCARD
-#endif
+class exception {
+public:
+	exception() noexcept : _info() {}
+	exception(const char* inf) noexcept : _info(inf) {}
+	exception(const char* inf, int) noexcept : _info(inf) {}
+	exception(const exception& other) noexcept : _info(other._info) {}
+	virtual ~exception() {}	
+	exception& operator= (const exception& other) noexcept { _info = other._info; }
+	virtual const char* info() const noexcept { return _info; }
+private:
+	const char* _info;
+};
 _DLT_END
-#endif
+#endif 

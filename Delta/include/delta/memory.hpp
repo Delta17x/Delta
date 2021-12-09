@@ -17,8 +17,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef _DLT_MEMORY_
-#define _DLT_MEMORY_
+#ifndef DLT_MEMORY_INCLUDED
+#define DLT_MEMORY_INCLUDED
 #include "utility.hpp"
 #include "cstdint.hpp"
 _DLT_BEGIN
@@ -64,6 +64,7 @@ template<class T>
 struct allocator {
 	using value_t = T;
 	allocator() {} 
+	~allocator() {}
 	// Allocates space for "amount" elements.
 	_NODISCARD T* allocate(size_t amount) const {
 		return new T[amount];
@@ -76,19 +77,6 @@ struct allocator {
 	using other = allocator<U>;
 };
 
-template<class Alloc>
-struct allocator_traits {
-	using allocator_t = Alloc;
-	using value_t = typename Alloc::value_t;
-	
-	//using pointer = /* see description */;
-	//using const_pointer = /* see description */;
-	//using void_pointer = /* see description */; 
-	//using const_void_pointer = /* see description */;
-	//
-	//using difference_type = /* see description */;
-	//using size_type = /* see description */;
-	
-};
+
 _DLT_END
 #endif // !_DLT_MEMORY_
