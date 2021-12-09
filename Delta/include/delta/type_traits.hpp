@@ -23,16 +23,6 @@ SOFTWARE.
 #include "utility.hpp"
 _DLT_BEGIN
 
-#if _HAS_CPP17 || _DEBUG
-// Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
-#define __DLT_DATA_HELPER(oft) template<class T> inline constexpr auto oft## _v = typename oft## <T>::value
-#else
-// Notice: not recommended for user use. Auto creates a _v version of a type_traits struct.
-#define __DLT_DATA_HELPER(oft)
-#endif
-// Notice: not recommended for user use. Auto creates a _t version of a type_traits struct.
-#define __DLT_TYPE_HELPER(oft) template<class T> using oft## _t = typename oft## <T>::type
-
 // Represents a constant of type "T" and value "val"
 template<class T, T val>
 struct variable_constant {
@@ -50,7 +40,7 @@ struct is_pointer : false_t {};
 template<class T>
 struct is_pointer<T*> : true_t {};
 
-__DLT_DATA_HELPER(is_pointer);
+template<class T> inline constexpr auto is_pointer_v = typename is_pointer<T>::value;
 
 template<class T>
 struct is_const : false_t {};
@@ -58,7 +48,7 @@ struct is_const : false_t {};
 template<class T>
 struct is_const<const T> : true_t {};
 
-__DLT_DATA_HELPER(is_const);
+template<class T> inline constexpr auto is_const_v = typename is_const<T>::value;
 
 template<class T>
 struct is_reference : false_t {};
@@ -69,7 +59,7 @@ struct is_reference<T&> : true_t {};
 template<class T>
 struct is_reference<T&&> : true_t {};
 
-__DLT_DATA_HELPER(is_reference);
+template<class T> inline constexpr auto is_reference_v = typename is_reference<T>::value;
 
 template<class T>
 struct is_lvalue_reference : false_t {};
@@ -77,7 +67,7 @@ struct is_lvalue_reference : false_t {};
 template<class T>
 struct is_lvalue_reference<T&> : true_t {};
 
-__DLT_DATA_HELPER(is_lvalue_reference);
+template<class T> inline constexpr auto is_lvalue_reference_v = typename is_lvalue_reference<T>::value;
 
 template<class T>
 struct is_rvalue_reference : false_t {};
@@ -85,7 +75,7 @@ struct is_rvalue_reference : false_t {};
 template<class T>
 struct is_rvalue_reference<T&&> : true_t {};
 
-__DLT_DATA_HELPER(is_rvalue_reference);
+template<class T> inline constexpr auto is_rvalue_reference_v = typename is_rvalue_reference<T>::value;
 
 template<class T>
 struct is_void : false_t {};
@@ -102,7 +92,7 @@ struct is_nullptr : false_t {};
 template<>
 struct is_nullptr<std::nullptr_t> : true_t {};
 
-__DLT_DATA_HELPER(is_nullptr);
+template<class T> inline constexpr auto is_nullptr_v = typename is_nullptr<T>::value;
 
 template<class T>
 struct is_array : false_t {};
@@ -113,7 +103,7 @@ struct is_array<T[]> : true_t {};
 template<class T, size_t _S>
 struct is_array<T[_S]> : true_t {}; 
 
-__DLT_DATA_HELPER(is_array);
+template<class T> inline constexpr auto is_array_v = typename is_array<T>::value;
 
 template<class T>
 struct remove_reference {
@@ -130,14 +120,14 @@ struct remove_reference<T&&> {
 	typedef T type;
 };
 
-__DLT_TYPE_HELPER(remove_reference);
+template<class T> using remove_reference_t = typename remove_reference<T>::type;
 
 template<class T>
 struct make_ptr {
 	typedef typename remove_reference<T>::type* type;
 };
 
-__DLT_TYPE_HELPER(make_ptr);
+template<class T> using make_ptr_t = typename make_ptr<T>::type;
 
 _DLT_END
 #endif
