@@ -5,6 +5,6 @@ cmake_minimum_required (VERSION 3.8)
 
 
 # Add source to this project's executable.
-add_executable (Delta "Delta.cpp" "include/delta/utility.hpp" "include/delta/memory.hpp" "include/delta/exception.hpp")
+add_executable (Delta "Delta.cpp" "include/delta/utility.hpp" "include/delta/memory.hpp" "include/delta/exception.hpp" "include/delta/compile_math.hpp")
 
 # TODO: Add tests and install targets if needed.

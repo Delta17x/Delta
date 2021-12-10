@@ -17,48 +17,45 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef DLT_CSTDINT_INCLUDED
-#define DLT_CSTDINT_INCLUDED
+// Contains useful template-based structs for finding data (traits) about types.
+#ifndef DLT_COMPILE_MATH_INCLUDED
+#define DLT_COMPILE_MATH_INCLUDED
 #include "utility.hpp"
-#include <stdint.h>
+#include "cstdint.hpp"
 _DLT_BEGIN
 
-typedef ::int8_t    int8_t ;
-typedef ::int16_t   int16_t;
-typedef ::int32_t   int32_t;
-typedef ::int64_t   int64_t;
-typedef ::uint8_t  uint8_t ;
-typedef ::uint16_t uint16_t;
-typedef ::uint32_t uint32_t;
-typedef ::uint64_t uint64_t;
+template<class T>
+// Contains 50-digit values for mathematical constants.
+struct constants {
+	constexpr static T pi =  T(3.1415926535897932384626433832795028841971693993751);
+	constexpr static T e =   T(2.7182818284590452353602874713526624977572470936962);
+	constexpr static T phi = T(1.6180339887498948482045868343656381177203091798057);
+};
 
-typedef ::int_least8_t    int_least8_t ;
-typedef ::int_least16_t   int_least16_t;
-typedef ::int_least32_t   int_least32_t;
-typedef ::int_least64_t   int_least64_t;
-typedef ::uint_least8_t  uint_least8_t ;
-typedef ::uint_least16_t uint_least16_t;
-typedef ::uint_least32_t uint_least32_t;
-typedef ::uint_least64_t uint_least64_t;
+template<class T, T _D>
+struct abs {
+	constexpr static T data = _D >= 0 ? _D : -_D;
+};
 
-typedef ::int_fast8_t    int_fast8_t ;
-typedef ::int_fast16_t   int_fast16_t;
-typedef ::int_fast32_t   int_fast32_t;
-typedef ::int_fast64_t   int_fast64_t;
-typedef ::uint_fast8_t  uint_fast8_t ;
-typedef ::uint_fast16_t uint_fast16_t;
-typedef ::uint_fast32_t uint_fast32_t;
-typedef ::uint_fast64_t uint_fast64_t;
+template<size_t N>
+struct factorial {
+	constexpr static size_t data = N * factorial<N - 1>::data;
+};
 
-typedef ::intptr_t   intptr_t;
-typedef ::uintptr_t uintptr_t;
+template<>
+struct factorial<0> {
+	constexpr static size_t data = 1;
+};
 
-typedef ::intmax_t intmax_t;
-typedef ::uintmax_t uintmax_t;
+template<int64_t Base, int64_t Power>
+struct exponent {
+	constexpr static int64_t data = Base * exponent<Base, abs<int64_t, Power>::data - 1>::data;
+};
 
-
-typedef decltype(sizeof 1) size_t;
+template<size_t Base>
+struct exponent<Base, 1> {
+	constexpr static size_t data = Base;
+};
 
 _DLT_END
-
 #endif

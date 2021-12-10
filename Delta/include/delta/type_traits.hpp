@@ -31,7 +31,7 @@ struct variable_constant {
 		return value;
 	}
 };
-typedef variable_constant<bool, true> true_t;	
+typedef variable_constant<bool, true> true_t;
 typedef variable_constant<bool, false> false_t;
 
 template<class T>
@@ -40,7 +40,7 @@ struct is_pointer : false_t {};
 template<class T>
 struct is_pointer<T*> : true_t {};
 
-template<class T> inline constexpr auto is_pointer_v = typename is_pointer<T>::value;
+template<class T> inline constexpr auto is_pointer_v = is_pointer<T>::value;
 
 template<class T>
 struct is_const : false_t {};
@@ -48,18 +48,18 @@ struct is_const : false_t {};
 template<class T>
 struct is_const<const T> : true_t {};
 
-template<class T> inline constexpr auto is_const_v = typename is_const<T>::value;
+template<class T> inline constexpr auto is_const_v = is_const<T>::value;
 
 template<class T>
 struct is_reference : false_t {};
 
 template<class T>
-struct is_reference<T&> : true_t {};	
+struct is_reference<T&> : true_t {};
 
 template<class T>
 struct is_reference<T&&> : true_t {};
 
-template<class T> inline constexpr auto is_reference_v = typename is_reference<T>::value;
+template<class T> inline constexpr auto is_reference_v = is_reference<T>::value;
 
 template<class T>
 struct is_lvalue_reference : false_t {};
@@ -67,7 +67,7 @@ struct is_lvalue_reference : false_t {};
 template<class T>
 struct is_lvalue_reference<T&> : true_t {};
 
-template<class T> inline constexpr auto is_lvalue_reference_v = typename is_lvalue_reference<T>::value;
+template<class T> inline constexpr auto is_lvalue_reference_v = is_lvalue_reference<T>::value;
 
 template<class T>
 struct is_rvalue_reference : false_t {};
@@ -75,7 +75,7 @@ struct is_rvalue_reference : false_t {};
 template<class T>
 struct is_rvalue_reference<T&&> : true_t {};
 
-template<class T> inline constexpr auto is_rvalue_reference_v = typename is_rvalue_reference<T>::value;
+template<class T> inline constexpr auto is_rvalue_reference_v = is_rvalue_reference<T>::value;
 
 template<class T>
 struct is_void : false_t {};
@@ -90,9 +90,9 @@ template<class T>
 struct is_nullptr : false_t {};
 
 template<>
-struct is_nullptr<std::nullptr_t> : true_t {};
+struct is_nullptr<decltype(nullptr)> : true_t {};
 
-template<class T> inline constexpr auto is_nullptr_v = typename is_nullptr<T>::value;
+template<class T> inline constexpr auto is_nullptr_v = is_nullptr<T>::value;
 
 template<class T>
 struct is_array : false_t {};
@@ -101,9 +101,9 @@ template<class T>
 struct is_array<T[]> : true_t {};
 
 template<class T, size_t _S>
-struct is_array<T[_S]> : true_t {}; 
+struct is_array<T[_S]> : true_t {};
 
-template<class T> inline constexpr auto is_array_v = typename is_array<T>::value;
+template<class T> inline constexpr auto is_array_v = is_array<T>::value;
 
 template<class T>
 struct remove_reference {
