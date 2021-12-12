@@ -63,6 +63,7 @@ inline DestT* move(SrcT* src_begin, const SrcT* src_end, SrcT* dest_begin) {
 template<class T>
 struct allocator {
 	using value_t = T;
+	using ptr_t = T*;
 	allocator() {} 
 	~allocator() {}
 	// Allocates space for "amount" elements.
@@ -77,6 +78,7 @@ struct allocator {
 	using other = allocator<U>;
 };
 
+// TODO: SMART POINTERS
 
 _DLT_END
 #endif // !_DLT_MEMORY_

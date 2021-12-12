@@ -17,28 +17,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef DLT_EXCEPTION_INCLUDED
-#define DLT_EXCEPTION_INCLUDED
+#ifndef DLT_ALGORITHM_INCLUDED
+#define DLT_ALGORITHM_INCLUDED
 #include "utility.hpp"
 _DLT_BEGIN
-class exception {
-public:
-	exception() noexcept : _info() {}
-	exception(const char* inf) noexcept : _info(inf) {}
-	exception(const char* inf, int) noexcept : _info(inf) {}
-	exception(const exception& other) noexcept : _info(other._info) {}
-	virtual ~exception() {}	
-	exception& operator= (const exception& other) noexcept { _info = other._info; }
-	virtual const char* info() const noexcept { return _info; }
-protected:
-	const char* _info;
-};
-
-class out_of_bounds : public exception {
-public:
-	out_of_bounds(int hi = 0) : exception("Attempted to access an out-of-bounds index."), index(hi) {}
-private:
-	int index;
-};
 _DLT_END
-#endif 
+#endif

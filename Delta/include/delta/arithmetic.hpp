@@ -17,28 +17,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef DLT_EXCEPTION_INCLUDED
-#define DLT_EXCEPTION_INCLUDED
-#include "utility.hpp"
+#ifndef DLT_COMPILE_MATH_INCLUDED
+#define DLT_COMPILE_MATH_INCLUDED
+#include "cstdint.hpp"
+#include "type_traits.hpp"
 _DLT_BEGIN
-class exception {
-public:
-	exception() noexcept : _info() {}
-	exception(const char* inf) noexcept : _info(inf) {}
-	exception(const char* inf, int) noexcept : _info(inf) {}
-	exception(const exception& other) noexcept : _info(other._info) {}
-	virtual ~exception() {}	
-	exception& operator= (const exception& other) noexcept { _info = other._info; }
-	virtual const char* info() const noexcept { return _info; }
-protected:
-	const char* _info;
+
+template<class T>
+// Contains mathematical constants and functions for type T.
+struct math {
+	static_assert(is_arithmetic_v<T>, "Delta arithmetic functions do not work with non-arithmetic types.");
+	constexpr static T pi =  T(3.1415926535897932384626433832795028841971693993751);
+	constexpr static T e =   T(2.7182818284590452353602874713526624977572470936962);
+	constexpr static T phi = T(1.6180339887498948482045868343656381177203091798057);
+	inline static T abs(T x) {
+		return T >= 0 ? x : -x;
+	}
+	inline static T exp(T base, T power) {
+		auto base1 = base;
+		if (power > 0)
+			while (--power > 0) {
+				base *= base1;
+			}
+		else if (power < 0)
+			while (power++ <= 0) {
+				base /= base1;
+			}
+		else
+			return 1;
+		return base;
+	}
+	inline static T fact(T x) {
+		for (T i = x; i > 1; i--)
+			x *= (i-1);
+		return x;
+	}
+	inline static T square(T x) {
+		return T * T;
+	}
+
 };
 
-class out_of_bounds : public exception {
-public:
-	out_of_bounds(int hi = 0) : exception("Attempted to access an out-of-bounds index."), index(hi) {}
-private:
-	int index;
-};
 _DLT_END
-#endif 
+#endif

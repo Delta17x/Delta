@@ -25,14 +25,18 @@ _DLT_BEGIN
 
 // Represents a constant of type "T" and value "val"
 template<class T, T val>
-struct variable_constant {
+struct value_constant {
 	constexpr static T value = val;
 	inline operator T() const noexcept {
 		return value;
 	}
 };
-typedef variable_constant<bool, true> true_t;
-typedef variable_constant<bool, false> false_t;
+template<class T>
+struct type_constant {
+	typedef T type;
+};
+typedef value_constant<bool, true> true_t;
+typedef value_constant<bool, false> false_t;
 
 template<class T>
 struct is_pointer : false_t {};
@@ -106,28 +110,109 @@ struct is_array<T[_S]> : true_t {};
 template<class T> inline constexpr auto is_array_v = is_array<T>::value;
 
 template<class T>
-struct remove_reference {
-	typedef T type;
-};
+struct remove_reference : type_constant<T> {};
 
 template<class T>
-struct remove_reference<T&> {
-	typedef T type;
-};
+struct remove_reference<T&> : type_constant<T> {};
 
 template<class T>
-struct remove_reference<T&&> {
-	typedef T type;
-};
+struct remove_reference<T&&> : type_constant<T> {};
 
 template<class T> using remove_reference_t = typename remove_reference<T>::type;
 
 template<class T>
-struct make_ptr {
-	typedef typename remove_reference<T>::type* type;
-};
+struct make_ptr : type_constant<remove_reference_t<T>* > {};
 
 template<class T> using make_ptr_t = typename make_ptr<T>::type;
+
+template<class T>
+struct remove_const : type_constant<T> {};
+
+template<class T>
+struct remove_const<const T> : type_constant<T> {};
+
+template<class T> using remove_const_t = typename remove_const<T>::type;
+
+template<class T>
+struct remove_volatile : type_constant<T> {};
+
+template<class T>
+struct remove_volatile<volatile T> : type_constant<T> {};
+
+template<class T> using remove_volatile_t = typename remove_volatile<T>::type;
+
+template<class T> 
+struct remove_cv : type_constant<T> {};
+
+template<class T> 
+struct remove_cv<const T> : type_constant<T> {};
+
+template<class T> 
+struct remove_cv<volatile T> : type_constant<T> {};
+
+template<class T> 
+struct remove_cv<const volatile T> : type_constant<T> {};
+
+template<class T> using remove_cv_t = typename remove_cv<T>::type;
+
+template<class T, class U>
+struct is_same : false_t {};
+
+template<class T>
+struct is_same<T, T> : true_t {};
+
+template<class T, class U> inline constexpr bool is_same_v = is_same<T, U>::value;
+
+_INT_BEGIN
+template<class T>
+struct is_integral_helper : false_t {};
+
+template<>
+struct is_integral_helper<signed char> : true_t {};
+
+template<>
+struct is_integral_helper<unsigned char> : true_t {};
+
+template<>
+struct is_integral_helper<signed short> : true_t {};
+
+template<>
+struct is_integral_helper<unsigned short> : true_t {};
+
+template<>
+struct is_integral_helper<signed int> : true_t {};
+
+template<>
+struct is_integral_helper<unsigned int> : true_t {};
+
+template<>
+struct is_integral_helper<signed long> : true_t {};
+
+template<>
+struct is_integral_helper<unsigned long> : true_t {};
+
+template<>
+struct is_integral_helper<signed long long> : true_t {};
+
+template<>
+struct is_integral_helper<unsigned long long> : true_t {};
+_INT_END
+
+template<class T>
+struct is_integral : value_constant<bool, internal::is_integral_helper<remove_cv_t<T>>::value> {};
+
+template<class T> inline constexpr bool is_integral_v = is_integral<T>::value;
+
+
+template<class T>
+struct is_floating_point : value_constant<bool, is_same_v<float, remove_cv_t<T>> || is_same_v<double, remove_cv_t<T>> || is_same_v<long double, remove_cv_t<T>>> {};
+
+template<class T> inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
+
+template<class T>
+struct is_arithmetic : value_constant<bool, is_integral_v<T> || is_floating_point_v<T>> {};
+
+template<class T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
 _DLT_END
 #endif

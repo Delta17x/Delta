@@ -17,28 +17,52 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef DLT_EXCEPTION_INCLUDED
-#define DLT_EXCEPTION_INCLUDED
+#ifndef DLT_STRING_INCLUDED
+#define DLT_STRING_INCLUDED
 #include "utility.hpp"
+#include "memory.hpp"
+#include "type_traits.hpp"
+#include "exception.hpp"
 _DLT_BEGIN
-class exception {
+template<class char_type, class size_type = size_t, class Allocator = allocator<Ch>>
+class string {
 public:
-	exception() noexcept : _info() {}
-	exception(const char* inf) noexcept : _info(inf) {}
-	exception(const char* inf, int) noexcept : _info(inf) {}
-	exception(const exception& other) noexcept : _info(other._info) {}
-	virtual ~exception() {}	
-	exception& operator= (const exception& other) noexcept { _info = other._info; }
-	virtual const char* info() const noexcept { return _info; }
-protected:
-	const char* _info;
-};
+	string() : len(1), alloc() {
+		ptr = alloc.allocate(2);
+	}
+	string(size_type l) : len(l), alloc() {
+		ptr = alloc.allocate(l + 1);
+	}
+	string(char_type* co) : alloc() {
+		ptr = alloc.allocate(30);
+		if (is_same_v<char, remove_cv<char_type>>)
+			for (len = 0; co[len] != '\0'; len++) {
+				ptr[len] = co[len];
+			}
+		else {
+			len = 0;
+		}
 
-class out_of_bounds : public exception {
-public:
-	out_of_bounds(int hi = 0) : exception("Attempted to access an out-of-bounds index."), index(hi) {}
+	}
+	string(const string& co) : len(co.len), ptr(co.ptr), alloc() {
+
+	}
+	string& operator= (const string& co) {
+
+	}
+	~string() {
+
+	}
+	char_type& operator[] (size_type at) {
+		if (at < 0 || at > len)
+			throw new out_of_bounds();
+		return ptr[at];
+	}
+
 private:
-	int index;
+	size_type len;
+	char_type* ptr;
+	Allocator alloc;
 };
 _DLT_END
-#endif 
+#endif
