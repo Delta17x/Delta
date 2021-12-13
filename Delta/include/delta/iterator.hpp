@@ -17,26 +17,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #ifndef DLT_ITERATOR_INCLUDED
 #define DLT_ITERATOR_INCLUDED
 #include "utility.hpp"
 #include "cstdint.hpp"
 #include "exception.hpp"
 _DLT_BEGIN
-template<class T, class size_type = size_t>
+template<class T, class st = size_t>
 class iterator {
 public:
-	iterator() : data(nullptr), cur(nullptr), size(0) {};
-	iterator(T* _first, T* _last = _first) : first(_first), last(_last), cur(_first) {}
-	iterator(const iterator<T, size_type>& other) : first(other.first), last(other.last), cur(other.cur) {}
+	using size_type = st;
+	iterator() : cur(nullptr) {};
+	iterator(T* curr) : cur(curr) {}
+	iterator(const iterator<T, size_type>& other) : cur(other.cur) {}
 	inline iterator<T, size_type>& operator=(const iterator<T, size_type>&) {}
 	~iterator() {}
-	inline T* begin() noexcept {
-		return first;
-	}
-	inline T* end() noexcept {
-		return last;
-	}
 	inline T& next() {
 		return *(cur + 1);
 	}
@@ -56,11 +52,6 @@ public:
 	inline T* operator-> () noexcept {
 		return cur;
 	}
-	inline T& operator[] (size_type index) {
-		if (index < 0)
-			throw new out_of_bounds();
-		return *(first + index);
-	}
 	template<class T2, class size_type2>
 	friend bool operator< (const iterator<T2, size_type2>&, const iterator<T2, size_type2>&) noexcept;
 	template<class T2, class size_type2>
@@ -79,12 +70,18 @@ public:
 	friend iterator<T2, size_type2> operator-- (iterator<T2, size_type2>&, int) noexcept;
 	template<class T2, class size_type2>
 	friend T2& operator* (iterator<T2, size_type2>& a) noexcept;
+	template<class T2, class size_type2>
+	friend bool operator==(iterator<T2, size_type2> a, iterator<T2, size_type2> b);
+	template<class T2, class size_type2>
+	friend bool operator!=(iterator<T2, size_type2> a, iterator<T2, size_type2> b);
+	template<class T2, class size_type2>
+	friend iterator operator+(iterator<T2, size_type2> a, size_type offset);
+	template<class T2, class size_type2>
+	friend iterator operator-(iterator<T2, size_type2> a, size_type offset);
 private:
-	T* first;
-	T* last;
+	// Points to an element in what is being iterated on. Should be managed by obejct being iterated on, so it is left as a raw pointer.
 	T* cur;
 
-	// Points to an element in what is being iterated on. Should be managed by obejct being iterated on, so it is left as a raw pointer.
 };
 
 template<class T, class size_type>
@@ -128,6 +125,22 @@ inline iterator<T, size_type> operator--(iterator<T, size_type>& a, int) noexcep
 template<class T, class size_type>
 inline T& operator* (iterator<T, size_type>& a) noexcept {
 	return *a.cur;
+}
+template<class T, class size_type>
+inline bool operator==(iterator<T, size_type> a, iterator<T, size_type> b) {
+	return a.cur == b.cur;
+}
+template<class T, class size_type>
+inline bool operator!=(iterator<T, size_type> a, iterator<T, size_type> b) {
+	return a.cur != b.cur;
+}
+template<class T, class size_type>
+inline iterator<T, size_type> operator+(iterator<T, size_type> a, size_type offset) noexcept {
+	return iterator<T, size_type>(*a + offset);
+}
+template<class T, class size_type>
+inline iterator<T, size_type> operator-(iterator<T, size_type> a, size_type offset) noexcept {
+	return iterator<T, size_type>(*a - offset);
 }
 _DLT_END
 #endif
