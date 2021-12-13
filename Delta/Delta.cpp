@@ -7,19 +7,20 @@
 #include "include/delta/type_traits.hpp"
 #include "include/delta/exception.hpp"
 #include "include/delta/arithmetic.hpp"
-#include "include/delta/iterator.hpp"
+#include "include/delta/data.hpp"
 #include <cmath>
+#include <vector>
 
+class A {};
+class B : A {};
 
 int main() {
-	// Create an array of floats with 5 elements.
-	float* foo = new float[6] {0, 1, 2, 3, 4, 5};
-	// Create an iterator that starts at index 4 (element 5) and ends at index 0 (element 1).
-	dlt::iterator<float> iter(foo, foo + 5);
-	iter.jump(4);
-	iter.jump(-3);
-	std::cout << iter[5];
-	// Delete the array.
-	delete[] foo;
+	dlt::array<int> jeff;
+	//dlt::iterator<int> iter(&foo[0], &foo[0] + foo.size());
+	for (auto i : jeff) {
+		//std::cout << dlt::is_base_of<A, B>::value;
+	}
+
+
 	return 0;
 }

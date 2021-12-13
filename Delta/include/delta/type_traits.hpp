@@ -214,5 +214,26 @@ struct is_arithmetic : value_constant<bool, is_integral_v<T> || is_floating_poin
 
 template<class T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
+/*
+_INT_BEGIN
+    template<class T>
+    struct is_base_of_test_c {};
+    template <class Base>
+    struct is_base_of_test_c<const volatile Base*> : true_t {};
+    template <>
+    struct is_base_of_test_c<const volatile void*> : false_t {};
+
+    template <class, class>
+    true_t is_base_of_test(...);
+    template <class Base, class Child>
+    auto is_base_of_test(int) ->
+        decltype(is_base_of_test_c<decltype(nullptr)>::value);
+_INT_END
+
+template <typename Base, typename Child>
+struct is_base_of :
+    value_constant<
+    bool, internal::is_base_of_test<Base, Child>(0)> {};
+    */
 _DLT_END
 #endif

@@ -65,6 +65,7 @@ struct allocator {
 	using value_t = T;
 	using ptr_t = T*;
 	allocator() {} 
+	allocator(const allocator<T>& other) {}
 	~allocator() {}
 	// Allocates space for "amount" elements.
 	_NODISCARD T* allocate(size_t amount) const {

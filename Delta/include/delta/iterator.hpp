@@ -35,7 +35,7 @@ public:
 		return first;
 	}
 	inline T* end() noexcept {
-		return last + 1;
+		return last;
 	}
 	inline T& next() {
 		return *(cur + 1);

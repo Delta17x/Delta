@@ -22,28 +22,32 @@ SOFTWARE.
 #include "memory.hpp"
 #include "type_traits.hpp"
 #include "exception.hpp"
+#include "iterator.hpp"
 _DLT_BEGIN
-template<class T, class Alloc = allocator<T>>
+template<class T, class size_type>
+class iterable {
+public:
+	iterable() {}
+	iterator<T, size_type> iter;
+};
+
+template<class T, class size_type = size_t, class Alloc = allocator<T >>
 class array {
 public:
-	array() : Alloc(), _size(1) {
-		ptr = alloc.allocate(1);
-	}
-	array(size_t s) : Alloc(), _size(s) {
-		ptr = alloc.allocate(s);
-	}
-	T& operator[] (size_t index) {
+	array() : alloc(), ptr(alloc.allocate(1)) _size(1) {}
+	array(size_type s) : alloc(), _size(s), ptr(alloc.allocate(s)), iter(ptr, ptr + s) {	}
+	T& operator[] (size_type index) {
 		if (index < 0 || index >= _size) {
-
+			return ptr[index];
 		}
 	}
-	size_t size() {
+	size_type size() {
 		return _size;
 	}
 private:
 	Alloc alloc;
 	T* ptr;
-	size_t _size;
+	size_type _size;
 };
 _DLT_END
 #endif
