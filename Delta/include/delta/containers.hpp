@@ -17,25 +17,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef DLT_DATA_INCLUDED
-#define DLT_DATA_INCLUDED
+#ifndef DLT_CONTAINERS_INCLUDED
+#define DLT_CONTAINERS_INCLUDED
 #include "memory.hpp"
 #include "type_traits.hpp"
 #include "exception.hpp"
 #include "iterator.hpp"
 _DLT_BEGIN
-template<class T, class size_type>
-class iterable {
-public:
-	iterable() {}
-	iterator<T, size_type> iter;
-};
-
 template<class T, class size_type = size_t, class Alloc = allocator<T >>
 class array {
 public:
-	array() : alloc(), ptr(alloc.allocate(1)) _size(1) {}
-	array(size_type s) : alloc(), _size(s), ptr(alloc.allocate(s)), iter(ptr, ptr + s) {	}
+	array() : alloc(), ptr(alloc.allocate(1)), _size(1) {}
+	array(size_type s) : alloc(), _size(s), ptr(alloc.allocate(s)) {	}
+	inline iterator<T, size_type> begin() noexcept {
+		return &ptr[0];
+	}
+	inline iterator<T, size_type> end() noexcept {
+		return &ptr[_size];
+	}
 	T& operator[] (size_type index) {
 		if (index < 0 || index >= _size) {
 			return ptr[index];
