@@ -21,6 +21,7 @@ SOFTWARE.
 #ifndef DLT_TYPETRAITS_INCLUDED
 #define DLT_TYPETRAITS_INCLUDED
 #include "utility.hpp"
+#include "cstdint.hpp"
 _DLT_BEGIN
 
 // Represents a constant of type "T" and value "val"
@@ -213,6 +214,24 @@ template<class T>
 struct is_arithmetic : value_constant<bool, is_integral_v<T> || is_floating_point_v<T>> {};
 
 template<class T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
+
+template<class _value_type,
+		 class _ptr_type = _value_type*,
+		 class _ref_type = _value_type&, 
+		 class _const_value_type = const _value_type, class _const_ptr_type = const _ptr_type,
+		 class _const_ref_type = const _ref_type,
+		 class _size_type = size_t,
+		 class _difference_type = int64_t>
+struct container_traits {
+	using value_type = _value_type;
+	using ptr_type = _ptr_type;
+	using ref_type = _ref_type;
+	using const_value_type = _const_value_type;
+	using const_ptr_type = _const_ptr_type;
+	using const_ref_type = _const_ref_type;
+	using size_type = _size_type;
+	using difference_type = _difference_type;
+};
 
 /*
 _INT_BEGIN
