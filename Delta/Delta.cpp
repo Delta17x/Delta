@@ -7,7 +7,7 @@
 #include "include/delta/type_traits.hpp"
 #include "include/delta/exception.hpp"
 #include "include/delta/arithmetic.hpp"
-#include "include/delta/data.hpp"
+#include "include/delta/containers.hpp"
 #include <cmath>
 #include <vector>
 
@@ -15,12 +15,7 @@ class A {};
 class B : A {};
 
 int main() {
-	dlt::array<int> jeff;
-	//dlt::iterator<int> iter(&foo[0], &foo[0] + foo.size());
-	for (auto i : jeff) {
-		//std::cout << dlt::is_base_of<A, B>::value;
-	}
-
+	//dlt::container_traits <{.Value_type = int, .Size_type = int}> jeff;
 
 	return 0;
 }

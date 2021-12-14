@@ -36,7 +36,9 @@ template<class T>
 struct type_constant {
 	typedef T type;
 };
-typedef value_constant<bool, true> true_t;
+template<class T>
+inline constexpr type_constant<T> type_of = type_constant<T>;
+typedef value_constant<bool, true> true_t;	
 typedef value_constant<bool, false> false_t;
 
 template<class T>
@@ -215,22 +217,37 @@ struct is_arithmetic : value_constant<bool, is_integral_v<T> || is_floating_poin
 
 template<class T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
-template<class _value_type,
-		 class _ptr_type = _value_type*,
-		 class _ref_type = _value_type&, 
-		 class _const_value_type = const _value_type, class _const_ptr_type = const _ptr_type,
-		 class _const_ref_type = const _ref_type,
-		 class _size_type = size_t,
-		 class _difference_type = int64_t>
+template<class Value_type,
+	class Ptr_type = Value_type*,
+	class Ref_type = Value_type&,
+	class Const_value_type = const Value_type,
+	class Const_ptr_type = const Ptr_type,
+	class Const_ref_type = const Ref_type,
+	class Size_type = size_t,
+	class Difference_type = int64_t>
+struct container_traits_types;
+
+template<container_traits_types>
+struct container_traits;
+
+template<class Value_type,
+		 class Ptr_type,
+		 class Ref_type, 
+		 class Const_value_type, 
+		 class Const_ptr_type,
+		 class Const_ref_type,
+		 class Size_type,
+		 class Difference_type>
+struct container_traits_types {
+    const static Value_type value_type;
+	const static Ptr_type value_type;
+	const static Ref_type ref_type;
+
+};
+
+template<container_traits_types types>
 struct container_traits {
-	using value_type = _value_type;
-	using ptr_type = _ptr_type;
-	using ref_type = _ref_type;
-	using const_value_type = _const_value_type;
-	using const_ptr_type = _const_ptr_type;
-	using const_ref_type = _const_ref_type;
-	using size_type = _size_type;
-	using difference_type = _difference_type;
+	//using value_t
 };
 
 /*
