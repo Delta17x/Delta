@@ -27,18 +27,16 @@ _DLT_BEGIN
 // Represents a constant of type "T" and value "val"
 template<class T, T val>
 struct value_constant {
-	constexpr static T value = val;
-	inline operator T() const noexcept {
-		return value;
-	}
+    constexpr static T value = val;
+    inline operator T() const noexcept {
+        return value;
+    }
 };
 template<class T>
 struct type_constant {
-	typedef T type;
+    typedef T type;
 };
-template<class T>
-inline constexpr type_constant<T> type_of = type_constant<T>;
-typedef value_constant<bool, true> true_t;	
+typedef value_constant<bool, true> true_t;
 typedef value_constant<bool, false> false_t;
 
 template<class T>
@@ -144,16 +142,16 @@ struct remove_volatile<volatile T> : type_constant<T> {};
 
 template<class T> using remove_volatile_t = typename remove_volatile<T>::type;
 
-template<class T> 
+template<class T>
 struct remove_cv : type_constant<T> {};
 
-template<class T> 
+template<class T>
 struct remove_cv<const T> : type_constant<T> {};
 
-template<class T> 
+template<class T>
 struct remove_cv<volatile T> : type_constant<T> {};
 
-template<class T> 
+template<class T>
 struct remove_cv<const volatile T> : type_constant<T> {};
 
 template<class T> using remove_cv_t = typename remove_cv<T>::type;
@@ -216,39 +214,6 @@ template<class T>
 struct is_arithmetic : value_constant<bool, is_integral_v<T> || is_floating_point_v<T>> {};
 
 template<class T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
-
-template<class Value_type,
-	class Ptr_type = Value_type*,
-	class Ref_type = Value_type&,
-	class Const_value_type = const Value_type,
-	class Const_ptr_type = const Ptr_type,
-	class Const_ref_type = const Ref_type,
-	class Size_type = size_t,
-	class Difference_type = int64_t>
-struct container_traits_types;
-
-template<container_traits_types>
-struct container_traits;
-
-template<class Value_type,
-		 class Ptr_type,
-		 class Ref_type, 
-		 class Const_value_type, 
-		 class Const_ptr_type,
-		 class Const_ref_type,
-		 class Size_type,
-		 class Difference_type>
-struct container_traits_types {
-    const static Value_type value_type;
-	const static Ptr_type value_type;
-	const static Ref_type ref_type;
-
-};
-
-template<container_traits_types types>
-struct container_traits {
-	//using value_t
-};
 
 /*
 _INT_BEGIN

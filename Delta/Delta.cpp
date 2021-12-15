@@ -15,7 +15,13 @@ class A {};
 class B : A {};
 
 int main() {
-	//dlt::container_traits <{.Value_type = int, .Size_type = int}> jeff;
-
+	dlt::array<int> foo(8);
+	for (int i = 0; i < 8; i++) {
+		foo[i] = i;
+	}
+	dlt::array<int>::iterator iter(&foo[0]);
+	while (iter != foo.end()) 	{
+		std::cout << *iter++ << "\n";
+	}
 	return 0;
 }

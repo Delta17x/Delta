@@ -24,123 +24,108 @@ SOFTWARE.
 #include "cstdint.hpp"
 #include "exception.hpp"
 _DLT_BEGIN
-template<class T, class st = size_t>
-class iterator {
+template<class Value_type, class Ref_type = Value_type&, class Ptr_type = Value_type*, class Difference_type = diff_t>
+struct iterator_traits {
+	typedef Value_type value_type;
+	typedef Ref_type ref_type;
+	typedef Ptr_type ptr_type;
+	typedef Difference_type difference_type;
+};
+
+template<class traits>
+class iterator_base {
 public:
-	using size_type = st;
-	iterator() : cur(nullptr) {};
-	iterator(T* curr) : cur(curr) {}
-	iterator(const iterator<T, size_type>& other) : cur(other.cur) {}
-	inline iterator<T, size_type>& operator=(const iterator<T, size_type>&) {}
-	~iterator() {}
-	inline T& next() {
-		return *(cur + 1);
-	}
-	inline T& get() {
+	iterator_base() : cur(nullptr) {};
+	iterator_base(traits::ptr_type curr) : cur(curr) {}
+	iterator_base(const iterator_base<traits>& other) : cur(other.cur) {}
+	inline iterator_base<traits>& operator=(const iterator_base<traits>&) {}
+	~iterator_base() {}
+	inline traits::ref_type get() {
 		return *cur;
 	}
-	inline T& back() {
-		return *(cur - 1);
-	}
 	// Jumps forward <elems> elements.
-	inline void jump(size_type elems) noexcept {
+	inline void jump(traits::difference_type elems) noexcept {
 		cur += elems;
 	}
-	inline const T* current() const noexcept {
+	inline traits::value_type const* current() const noexcept {
 		return cur;
 	}
-	inline T* operator-> () noexcept {
+	inline traits::ptr_type operator-> () noexcept {
 		return cur;
 	}
-	template<class T2, class size_type2>
-	friend bool operator< (const iterator<T2, size_type2>&, const iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend bool operator<= (const iterator<T2, size_type2>&, const iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend bool operator> (const iterator<T2, size_type2>&, const iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend bool operator>= (const iterator<T2, size_type2>&, const iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend iterator<T2, size_type2>& operator++ (iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend iterator<T2, size_type2>& operator-- (iterator<T2, size_type2>&) noexcept;
-	template<class T2, class size_type2>
-	friend iterator<T2, size_type2> operator++ (iterator<T2, size_type2>&, int) noexcept;
-	template<class T2, class size_type2>
-	friend iterator<T2, size_type2> operator-- (iterator<T2, size_type2>&, int) noexcept;
-	template<class T2, class size_type2>
-	friend T2& operator* (iterator<T2, size_type2>& a) noexcept;
-	template<class T2, class size_type2>
-	friend bool operator==(iterator<T2, size_type2> a, iterator<T2, size_type2> b);
-	template<class T2, class size_type2>
-	friend bool operator!=(iterator<T2, size_type2> a, iterator<T2, size_type2> b);
-	template<class T2, class size_type2>
-	friend iterator operator+(iterator<T2, size_type2> a, size_type offset);
-	template<class T2, class size_type2>
-	friend iterator operator-(iterator<T2, size_type2> a, size_type offset);
-private:
+	inline traits::ref_type operator* () noexcept {
+		return *cur;
+	}
 	// Points to an element in what is being iterated on. Should be managed by obejct being iterated on, so it is left as a raw pointer.
-	T* cur;
+	traits::ptr_type cur;
+};
+                 
+template<class traits>
+class iterator : public iterator_base<traits> {
+public:
+	iterator(traits::ptr_type curr) : iterator_base(curr) {}
+	inline traits::ptr_type begin() noexcept {
+
+	}
+	inline traits::ptr_type end() noexcept {
+
+	}
 
 };
 
-template<class T, class size_type>
-inline bool operator< (const iterator<T, size_type>& a, const iterator<T, size_type>& other) noexcept {
+template<class traits>
+inline bool operator< (const iterator<traits>& a, const iterator<traits>& other) noexcept {
 	return a.cur < other.cur;
 }
-template<class T, class size_type>
-inline bool operator<= (const iterator<T, size_type>& a, const iterator<T, size_type>& other) noexcept {
+template<class traits>
+inline bool operator<= (const iterator<traits>& a, const iterator<traits>& other) noexcept {
 	return a.cur <= other.cur;
 }
-template<class T, class size_type>
-inline bool operator> (const iterator<T, size_type>& a, const iterator<T, size_type>& other) noexcept {
+template<class traits>
+inline bool operator> (const iterator<traits>& a, const iterator<traits>& other) noexcept {
 	return a.cur > other.cur;
 }
-template<class T, class size_type>
-inline bool operator>= (const iterator<T, size_type>& a, const iterator<T, size_type>& other) noexcept {
+template<class traits>
+inline bool operator>= (const iterator<traits>& a, const iterator<traits>& other) noexcept {
 	return a.cur >= other.cur;
 }
-template<class T, class size_type>
-inline iterator<T, size_type>& operator++(iterator<T, size_type>& a) noexcept {
+template<class traits>
+inline iterator<traits>& operator++(iterator<traits>& a) noexcept {
 	a.cur++;
 	return a;
 }
-template<class T, class size_type>
-inline iterator<T, size_type>& operator--(iterator<T, size_type>& a) noexcept {
+template<class traits>
+inline iterator<traits>& operator--(iterator<traits>& a) noexcept {
 	a.cur--;
 	return a;
 }
-template<class T, class size_type>
-inline iterator<T, size_type> operator++(iterator<T, size_type>& a, int) noexcept {
+template<class traits>
+inline iterator<traits> operator++(iterator<traits>& a, int) noexcept {
 	auto temp = a;
 	a.cur++;
 	return temp;
 }
-template<class T, class size_type>
-inline iterator<T, size_type> operator--(iterator<T, size_type>& a, int) noexcept {
+template<class traits>
+inline iterator<traits> operator--(iterator<traits>& a, int) noexcept {
 	auto temp = a;
 	a.cur--;
 	return temp;
 }
-template<class T, class size_type>
-inline T& operator* (iterator<T, size_type>& a) noexcept {
-	return *a.cur;
+template<class traits>
+inline iterator<traits> operator+(iterator<traits> a, typename traits::difference_type offset) noexcept {
+	return iterator<traits>(*a + offset);
 }
-template<class T, class size_type>
-inline bool operator==(iterator<T, size_type> a, iterator<T, size_type> b) {
+template<class traits>
+inline iterator<traits> operator-(iterator<traits> a, typename traits::difference_type offset) noexcept {
+	return iterator<traits>(*a - offset);
+}
+template<class traits>
+inline bool operator==(iterator<traits> a, iterator<traits> b) {
 	return a.cur == b.cur;
 }
-template<class T, class size_type>
-inline bool operator!=(iterator<T, size_type> a, iterator<T, size_type> b) {
+template<class traits>
+inline bool operator!=(iterator<traits> a, iterator<traits> b) {
 	return a.cur != b.cur;
-}
-template<class T, class size_type>
-inline iterator<T, size_type> operator+(iterator<T, size_type> a, size_type offset) noexcept {
-	return iterator<T, size_type>(*a + offset);
-}
-template<class T, class size_type>
-inline iterator<T, size_type> operator-(iterator<T, size_type> a, size_type offset) noexcept {
-	return iterator<T, size_type>(*a - offset);
 }
 _DLT_END
 #endif

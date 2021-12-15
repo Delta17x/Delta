@@ -27,18 +27,22 @@ _DLT_BEGIN
 template<class T, class size_type = size_t, class Alloc = allocator<T >>
 class array {
 public:
+	using iterator = ::dlt::iterator <iterator_traits<T>>;
 	array() : alloc(), ptr(alloc.allocate(1)), _size(1) {}
-	array(size_type s) : alloc(), _size(s), ptr(alloc.allocate(s)) {	}
-	inline iterator<T, size_type> begin() noexcept {
+	array(size_type s) : alloc(), _size(s) {
+		ptr = alloc.allocate(s + 2);
+	}
+	inline iterator begin() noexcept {
 		return &ptr[0];
 	}
-	inline iterator<T, size_type> end() noexcept {
+	inline iterator end() noexcept {
 		return &ptr[_size];
 	}
 	T& operator[] (size_type index) {
 		if (index < 0 || index >= _size) {
-			return ptr[index];
+			throw new out_of_bounds();
 		}
+		return ptr[index];
 	}
 	size_type size() {
 		return _size;
