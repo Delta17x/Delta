@@ -20,23 +20,24 @@ SOFTWARE.
 #ifndef DLT_CONTAINERS_INCLUDED
 #define DLT_CONTAINERS_INCLUDED
 #include "memory.hpp"
-#include "type_traits.hpp"
 #include "exception.hpp"
 #include "iterator.hpp"
 _DLT_BEGIN
 template<class T, class size_type = size_t, class Alloc = allocator<T >>
 class array {
+	using _Iter_traits = iterator_traits<T>;
 public:
-	using iterator = ::dlt::iterator <iterator_traits<T>>;
+	using iterator = ::dlt::iterator<_Iter_traits>;
+	using reverse_iterator = ::dlt::reverse_iterator<_Iter_traits>;
 	array() : alloc(), ptr(alloc.allocate(1)), _size(1) {}
 	array(size_type s) : alloc(), _size(s) {
 		ptr = alloc.allocate(s + 2);
 	}
 	inline iterator begin() noexcept {
-		return &ptr[0];
+		return iterator(&ptr[0]);
 	}
 	inline iterator end() noexcept {
-		return &ptr[_size];
+		return iterator(&ptr[_size]);
 	}
 	T& operator[] (size_type index) {
 		if (index < 0 || index >= _size) {

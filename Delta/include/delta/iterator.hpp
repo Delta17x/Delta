@@ -35,97 +35,140 @@ struct iterator_traits {
 template<class traits>
 class iterator_base {
 public:
+	// Required for custom iterator: operator+, operator-, next(), back(), 
+	using value_type = typename traits::value_type;
+	using ptr_type = typename traits::ptr_type;
+	using ref_type = typename traits::ref_type;
+	using difference_type = typename traits::difference_type;
 	iterator_base() : cur(nullptr) {};
-	iterator_base(traits::ptr_type curr) : cur(curr) {}
+	iterator_base(ptr_type curr) : cur(curr) {}
 	iterator_base(const iterator_base<traits>& other) : cur(other.cur) {}
-	inline iterator_base<traits>& operator=(const iterator_base<traits>&) {}
 	~iterator_base() {}
-	inline traits::ref_type get() {
+	inline ref_type get() {
 		return *cur;
 	}
-	// Jumps forward <elems> elements.
-	inline void jump(traits::difference_type elems) noexcept {
-		cur += elems;
-	}
-	inline traits::value_type const* current() const noexcept {
+	inline ptr_type current() const noexcept {
 		return cur;
 	}
-	inline traits::ptr_type operator-> () noexcept {
+	inline ptr_type operator-> () noexcept {
 		return cur;
 	}
-	inline traits::ref_type operator* () noexcept {
+	inline ref_type operator* () noexcept {
 		return *cur;
 	}
 	// Points to an element in what is being iterated on. Should be managed by obejct being iterated on, so it is left as a raw pointer.
-	traits::ptr_type cur;
+	ptr_type cur;
 };
-                 
+
 template<class traits>
 class iterator : public iterator_base<traits> {
 public:
-	iterator(traits::ptr_type curr) : iterator_base(curr) {}
-	inline traits::ptr_type begin() noexcept {
-
-	}
-	inline traits::ptr_type end() noexcept {
-
-	}
-
+	iterator(typename traits::ptr_type curr) : iterator_base<traits>(curr) {}
 };
 
 template<class traits>
-inline bool operator< (const iterator<traits>& a, const iterator<traits>& other) noexcept {
-	return a.cur < other.cur;
-}
+class reverse_iterator : public iterator_base<traits> {
+public:
+	reverse_iterator(typename traits::ptr_type curr) : iterator_base<traits>(curr) {}
+	reverse_iterator(const iterator<traits>& other) : iterator_base<traits>(other.cur - 1) {}
+};
+
 template<class traits>
-inline bool operator<= (const iterator<traits>& a, const iterator<traits>& other) noexcept {
-	return a.cur <= other.cur;
+class linked_list_iterator : public iterator_base<traits> {
+	linked_list_iterator(typename traits::ptr_type curr) : iterator_base<traits>(curr) {}
+};
+
+template<class T>
+inline bool operator> (const T& a, const T& other) noexcept {
+	return !(a < other || a == other);
 }
-template<class traits>
-inline bool operator> (const iterator<traits>& a, const iterator<traits>& other) noexcept {
-	return a.cur > other.cur;
+template<class T>
+inline bool operator>= (const T& a, const T& other) noexcept {
+	return a > other || a == other;
 }
-template<class traits>
-inline bool operator>= (const iterator<traits>& a, const iterator<traits>& other) noexcept {
-	return a.cur >= other.cur;
+template<class T>
+inline bool operator<= (const T& a, const T& other) noexcept {
+	return a < other || a == other;
 }
-template<class traits>
-inline iterator<traits>& operator++(iterator<traits>& a) noexcept {
-	a.cur++;
+template<class T>
+inline T& operator++(T& a) noexcept {
+	a = a + 1;
 	return a;
 }
-template<class traits>
-inline iterator<traits>& operator--(iterator<traits>& a) noexcept {
-	a.cur--;
+template<class T>
+inline T& operator--(T& a) noexcept {
+	a = a - 1;
 	return a;
 }
-template<class traits>
-inline iterator<traits> operator++(iterator<traits>& a, int) noexcept {
-	auto temp = a;
-	a.cur++;
+template<class T>
+inline T operator++(T& a, int) noexcept {
+	T temp = a;
+	a = a + 1;
 	return temp;
 }
-template<class traits>
-inline iterator<traits> operator--(iterator<traits>& a, int) noexcept {
-	auto temp = a;
-	a.cur--;
+template<class T>
+inline T operator--(T& a, int) noexcept {
+	T temp = a;
+	a = a - 1;
 	return temp;
 }
+template<class T>
+inline bool operator!=(T a, T b) {
+	return !(a == b);
+}
+// Standard iterator operators
 template<class traits>
 inline iterator<traits> operator+(iterator<traits> a, typename traits::difference_type offset) noexcept {
-	return iterator<traits>(*a + offset);
+	return iterator<traits>(a.cur + offset);
 }
 template<class traits>
 inline iterator<traits> operator-(iterator<traits> a, typename traits::difference_type offset) noexcept {
-	return iterator<traits>(*a - offset);
+	return iterator<traits>(a.cur - offset);
 }
 template<class traits>
 inline bool operator==(iterator<traits> a, iterator<traits> b) {
 	return a.cur == b.cur;
 }
 template<class traits>
-inline bool operator!=(iterator<traits> a, iterator<traits> b) {
-	return a.cur != b.cur;
+inline bool operator< (const iterator<traits>& a, const iterator<traits>& other) noexcept {
+	return a.cur < other.cur;
 }
+// Reverse iterator operators
+template<class traits>
+inline reverse_iterator<traits> operator+(reverse_iterator<traits> a, typename traits::difference_type offset) noexcept {
+	return reverse_iterator<traits>(a.cur - offset);
+}
+template<class traits>
+inline reverse_iterator<traits> operator-(reverse_iterator<traits> a, typename traits::difference_type offset) noexcept {
+	return reverse_iterator<traits>(a.cur + offset);
+}
+template<class traits>
+inline bool operator==(reverse_iterator<traits> a, reverse_iterator<traits> b) {
+	return a.cur == b.cur;
+}
+template<class traits>
+inline bool operator==(reverse_iterator<traits> a, iterator<traits> b) {
+	return a.cur == b.cur - 1;
+}
+template<class traits>
+inline bool operator< (const reverse_iterator<traits>& a, const reverse_iterator<traits>& other) noexcept {
+	return a.cur > other.cur;
+}
+
+template<class traits>
+inline linked_list_iterator<traits> operator+(linked_list_iterator<traits> a, typename traits::difference_type offset) {
+	linked_list_iterator<traits> ret(a);
+	for (int i = 0; i < offset; i++)
+		ret = linked_list_iterator<traits>(ret->cur.next);
+	return ret;
+}
+/*
+struct node {
+	node* next;
+	node* back;
+
+}
+
+*/
 _DLT_END
 #endif
